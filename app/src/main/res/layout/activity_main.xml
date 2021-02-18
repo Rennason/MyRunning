@@ -28,8 +28,10 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="@color/white"
-        android:background="@drawable/botao_customaziado"
+        android:checked="true"
+        android:background="@drawable/botao_customizado_seletor"
         android:layout_marginTop="60dp"
+
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
