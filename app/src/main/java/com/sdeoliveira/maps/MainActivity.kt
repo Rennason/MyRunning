@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
         toggle_button.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                Toast.makeText(applicationContext,"Toggle on",Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"ON",Toast.LENGTH_SHORT).show()
 
             } else {
-                Toast.makeText(applicationContext,"Toggle off",Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"OFF",Toast.LENGTH_SHORT).show()
 
             }
         }
