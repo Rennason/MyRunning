@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval"
     >
 
-    <solid
-        android:color="@android:color/holo_green_light"
+    <item android:drawable="@drawable/botao_customizadooff"
         />
 
-    <stroke
-        android:width="2dp"
-        android:color="@android:color/white"
-        />
-</shape>
+    <item>
+        <bitmap android:src="@drawable/ic_pause"
+            android:gravity="center"/>
+
+    </item>
+
+</layer-list>

@@ -1,14 +1,20 @@
 package com.sdeoliveira.maps
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -16,10 +22,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
+
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map: GoogleMap //lateinit: rastrear a var "map" do tipo "GoogleMap" e depois reinicia-la
     private val toggle_button by lazy { findViewById<ToggleButton>(R.id.toggleButton) }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var latIni : Double = 0.0
+    private var latFinal : Double = 0.0
+    private var longIni : Double = 0.0
+    private var longFinal : Double = 0.0
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -47,13 +59,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         setContentView(R.layout.activity_main)
         createFragment() // método criar mapa
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext!!)
+
         toggle_button.setOnCheckedChangeListener { buttonView, isChecked ->
+
             if (isChecked) {
-                Toast.makeText(applicationContext,"ON",Toast.LENGTH_SHORT).show()
+                //
 
+
+                var retorno = getLastKnownLocation()
+
+                //Toast.makeText(applicationContext,"ON",Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(applicationContext,"OFF",Toast.LENGTH_SHORT).show()
 
+                var latitudeInicial = latFinal
+                var longitudeInicial = longFinal
+                var retorno = getLastKnownLocation()
+
+                var deltaLat = latFinal - latitudeInicial
+                var deltaLong = longFinal - longitudeInicial
+
+                Toast.makeText(applicationContext,"$deltaLat $deltaLong",Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -122,4 +148,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         Toast.makeText(this, "Latitude: ${p0.latitude}, Longitude: ${p0.longitude}", Toast.LENGTH_LONG).show()
     }
 
+    private fun getLastKnownLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location->
+                if (location != null) {
+                    // use your location object
+                    // get latitude , longitude and other info from this
+                    latFinal = location.latitude
+                    longFinal = location.longitude
+                }
+
+            }
+
+    }
 }
