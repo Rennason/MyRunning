@@ -6,6 +6,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map: GoogleMap //lateinit: rastrear a var "map" do tipo "GoogleMap" e depois reinicia-la
+    private val toggle_button by lazy { findViewById<ToggleButton>(R.id.toggleButton) }
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -44,6 +46,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         createFragment() // método criar mapa
+
+        toggle_button.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                Toast.makeText(applicationContext,"Toggle on",Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(applicationContext,"Toggle off",Toast.LENGTH_SHORT).show()
+
+            }
+        }
+
     }
 
     // Fragment para carregar o mapa
@@ -108,4 +121,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
     override fun onMyLocationClick(p0: Location) {
         Toast.makeText(this, "Latitude: ${p0.latitude}, Longitude: ${p0.longitude}", Toast.LENGTH_LONG).show()
     }
+
 }
