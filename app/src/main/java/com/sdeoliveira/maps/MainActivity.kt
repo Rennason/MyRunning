@@ -8,6 +8,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
@@ -44,6 +47,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         map.setOnMyLocationButtonClickListener(this) // Criar botão Localizar
         map.setOnMyLocationClickListener(this) // Mostrar latitude e longitude no mapa
         enableLocation() // Ativar localização
+        setMapLongClick(this.map) // Adicionar marcador com um click longo
+        setPoiClick(map) // Adicionar ponto de interesse (POIs)
     }
 
     private fun createMarker() {
@@ -51,7 +56,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         val marker: MarkerOptions = MarkerOptions().position(coordenadas).title("Reservoir Park - Singapura") // Marca: val coordenadas e nomeia o lugar com: .title
         map.addMarker(marker) // add no map a val marker
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas, 10f), 4000, null) // Configurar ZOOM de val coordenadas, 10f: quanto de Zoom, 6000: velocidade do Zoom 4.5s
-        Toast.makeText(this, "Coordenadas do Marcador", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Click no marcador para mais informações", Toast.LENGTH_LONG).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +112,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
     // Função solicitar permissão de localização
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) { // Pedido para ativar permissão
-            Toast.makeText(this, "Vá em ajustes e ative permissões para usar o botão Localizar em tempo real", Toast.LENGTH_LONG).show() // Toast ativar permissão
+            Toast.makeText(this, "Ative permissões para usar o botão Localização em tempo real", Toast.LENGTH_LONG).show() // Toast ativar permissão
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
         }
@@ -122,7 +127,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 map.isMyLocationEnabled = true // Ativa localização em tempo real
             } else {
-                Toast.makeText(this, "Para ativar sua localização vá em ajustes e ative permissões", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Para carregar sua localização vá em ajustes e ative permissões", Toast.LENGTH_SHORT).show()
             }
             else -> {}
         }
@@ -140,12 +145,71 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
    // Botão Localizar do canto superior direito da tela
     override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(this, "Localizar", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Click no ponto azul para ver coordenadas", Toast.LENGTH_SHORT).show()
         return false
    }
     // Mostrar Latitude e Longitude no mapa
     override fun onMyLocationClick(p0: Location) {
         Toast.makeText(this, "Latitude: ${p0.latitude}, Longitude: ${p0.longitude}", Toast.LENGTH_LONG).show()
+    }
+
+    // Criar menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.map_options, menu)
+        return true
+    }
+
+    // Itens de opções do menu
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.normal_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            true
+        }
+        R.id.hybrid_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_HYBRID
+            true
+        }
+        R.id.satellite_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            true
+        }
+        R.id.terrain_map -> {
+            map.mapType = GoogleMap.MAP_TYPE_TERRAIN
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    // Adiciona um marcador usando um click longo no mapa
+    private fun setMapLongClick(map: GoogleMap) {
+
+        map.setOnMapLongClickListener { latLng ->
+
+            val snippets = String.format(
+                Locale.getDefault(),
+                "Latitude: %1$.5f, Longitude: %2$.5f",
+                latLng.latitude,
+                latLng.longitude)
+
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(getString(R.string.dropped_pin))
+                    .snippet(snippets))
+        }
+    }
+
+    // Adicionar ponto de interesse (POIs). Coloca um marcador no mapa quando o usuário
+    // clica em um POI e exibe uma janela de informações.
+    private fun setPoiClick(map: GoogleMap){
+        map.setOnPoiClickListener { poi ->
+
+            val poiMarker = map.addMarker(MarkerOptions()
+                .position(poi.latLng)
+                .title(poi.name))
+            poiMarker.showInfoWindow()
+        }
     }
 
     private fun getLastKnownLocation() {
