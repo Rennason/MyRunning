@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         val marker: MarkerOptions = MarkerOptions().position(coordenadas).title("Reservoir Park - Singapura") // Marca: val coordenadas e nomeia o lugar com: .title
         map.addMarker(marker) // add no map a val marker
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(coordenadas, 10f), 4000, null) // Configurar ZOOM de val coordenadas, 10f: quanto de Zoom, 6000: velocidade do Zoom 4.5s
-        Toast.makeText(this, "Coordenadas do Marcador:", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Coordenadas do Marcador", Toast.LENGTH_LONG).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
