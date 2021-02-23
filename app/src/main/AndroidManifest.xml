@@ -26,6 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.TrackingService"
+            android:foregroundServiceType="location"/>
     </application>
 
 </manifest>
