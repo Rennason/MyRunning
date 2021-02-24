@@ -4,15 +4,17 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -22,22 +24,124 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
+import com.sdeoliveira.maps.services.PoliLine
 import com.sdeoliveira.maps.services.TrackingService
 import java.util.*
+import kotlin.math.round
+import androidx.lifecycle.Observer as Observer
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map: GoogleMap //lateinit: rastrear a var "map" do tipo "GoogleMap" e depois reinicia-la
     private val toggle_button by lazy { findViewById<ToggleButton>(R.id.toggleButton) }
+    private val textView1 by lazy { findViewById<TextView>(R.id.textView1)}
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var latIni: Double = 0.0
     private var latFinal: Double = 0.0
     private var longIni: Double = 0.0
     private var longFinal: Double = 0.0
+    private var weight = 150f
+    
+    private var isTracking = false
+    private var pathPoints = mutableListOf<PoliLine>()
+
+    private var curTimeMillis = 0L
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
+    }
+
+    private fun subscribeToObservers(){
+        TrackingService.isTracking.observe(this,  Observer {
+            updateTracking(it)
+        })
+
+        TrackingService.pathPoints.observe(this, Observer {
+            pathPoints = it
+            addLatestPoliline()
+        })
+
+        TrackingService.timeRunMiliSeconds.observe(this, Observer{
+            curTimeMillis = it
+            //val formattedTime = TrackingUtility.getFormattedStopWatchTime(curTimeMillis, true)
+            //tvTimer.text = formattedTime
+            //textView1.text = curTimeMillis.toString()
+            Log.d("Tempo", curTimeMillis.toString())
+        })
+    }
+
+    private fun toggleRun(){
+        if(isTracking)
+        {
+            sendCommandToService("ACTION_PAUSE_SERVICE")
+        }
+        else{
+            sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
+        }
+    }
+
+    private fun updateTracking(isTracking : Boolean){
+        this.isTracking = isTracking
+
+        /*if(!isTracking){
+            toggle
+        }*/
+    }
+
+    private fun addAllPoliline(){
+        for(poliline in pathPoints){
+            val polilineOptions= PolylineOptions()
+                .color(Color.RED)
+                .width(8f)
+                .addAll(poliline)
+            map?.addPolyline(polilineOptions)
+        }
+    }
+
+    private fun endRun(): Int {
+        var distanceMeters = 0
+        for (poliline in pathPoints){
+            distanceMeters += calculatePolilineLength(poliline).toInt()
+        }
+
+        var distanceKm = distanceMeters/1000f
+
+        val avgSpeed = round( distanceKm / (curTimeMillis/1000f/60/60) * 10)/10f //converte milisegundos para hora e distancia em km
+        val calories = (distanceKm * weight).toInt()
+
+        return calories
+    }
+
+
+    private fun calculatePolilineLength(poliline : PoliLine) : Float {
+        var distance = 0f
+        for(i in 0..poliline.size - 2)
+        {
+            val posA = poliline[i]
+            val posB = poliline[i+1]
+
+            val result = FloatArray(1)
+
+            Location.distanceBetween(posA.latitude, posA.longitude, posB.latitude, posB.longitude, result)
+
+            distance += result[0]
+        }
+        return distance
+    }
+
+    private fun addLatestPoliline(){
+        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1){
+            val preLastLong = pathPoints.last()[pathPoints.last().size - 2]
+            val lastLastLong = pathPoints.last().last()
+            val polilineOptions = PolylineOptions()
+                .color(Color.RED)
+                .width(8f)
+                .add(preLastLong)
+                .add(lastLastLong)
+            map?.addPolyline(polilineOptions)
+        }
     }
 
     // A funçao será chamada quando o mapa carregar
@@ -73,9 +177,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext!!)
 
         toggle_button.setOnCheckedChangeListener { buttonView, isChecked ->
-            sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
-        }
+            //sendCommandToService("ACTION_START_OR_RESUME_SERVICE")
+            toggleRun()
 
+            if(isChecked)
+            {
+                textView1.text = "${endRun()} cal"
+            }
+            else
+            {
+                textView1.text = ""
+            }
+        }
+        subscribeToObservers()
     }
 
     // Fragment para carregar o mapa
@@ -83,6 +197,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment // função para criar mapa do tipo: as SupportMapFragment
         mapFragment.getMapAsync(this) // chamada para OnMapReadyCallback
+        addAllPoliline()
     }
 
     // Função para verificar/comparar se a permissão de localização  esta ativada
@@ -90,6 +205,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         this, Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
+    @SuppressLint("MissingPermission")
     private fun enableLocation() {
         if (!::map.isInitialized) return // caso o mapa não tenha sido inicializado retorne...
         if (isLocationPermissionGranted()) {
@@ -121,6 +237,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
     }
 
     // Verifica a resposta da solicitação
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -238,19 +355,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
             )
             poiMarker.showInfoWindow()
         }
-
-        fun getLastKnownLocation() {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location ->
-                    if (location != null) {
-                        // use your location object
-                        // get latitude , longitude and other info from this
-                        latFinal = location.latitude
-                        longFinal = location.longitude
-                    }
-
-                }
-        }
-
     }
 }
