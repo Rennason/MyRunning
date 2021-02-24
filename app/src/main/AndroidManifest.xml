@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sdeoliveira.maps">
 
-    //Permissão para acessar a localização em tempo de execução
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Maps">
+        <activity android:name=".services.User"></activity>
 
-        // API KEY para Geolocalização em: res/values/google_maps-api.xml/"google_maps_key" >>> cole em: android:value="@string/..."
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -26,8 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.TrackingService"
-            android:foregroundServiceType="location"/>
+
+        <service
+            android:name=".services.TrackingService"
+            android:foregroundServiceType="location" />
     </application>
 
 </manifest>
