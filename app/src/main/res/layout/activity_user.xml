@@ -6,19 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".User">
 
-
     <EditText
         android:id="@+id/nameEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:hint="@string/seu_nome"
         android:textSize="20sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/Peso"
@@ -53,7 +51,7 @@
 
     <EditText
         android:id="@+id/weight_user"
-        android:layout_width="30dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:inputType="number"
@@ -65,7 +63,7 @@
 
     <EditText
         android:id="@+id/height_user"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:inputType="number"
@@ -75,7 +73,7 @@
 
     <EditText
         android:id="@+id/age_user"
-        android:layout_width="25dp"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:inputType="number"
@@ -88,9 +86,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enviar"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="@id/nameEdit"
         app:layout_constraintEnd_toEndOf="@id/nameEdit"
         app:layout_constraintTop_toBottomOf="@id/age_user"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
