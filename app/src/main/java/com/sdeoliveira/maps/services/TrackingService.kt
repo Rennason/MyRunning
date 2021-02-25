@@ -49,6 +49,11 @@ class TrackingService : LifecycleService() {
         timeRunMiliSeconds.postValue(0L)
     }
 
+    public fun init2Values(pIsTracking: Boolean)
+    {
+        //isTracking.postValue(is)
+    }
+
     override fun onCreate() {
         super.onCreate()
         initValues()

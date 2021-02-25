@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Maps</string>
+    <string name="app_name">My Running</string>
     <string name="normal_map">Mapa Normal</string>
     <string name="hybrid_map">Mapa Híbrido</string>
     <string name="satellite_map">Mapa de Satélite</string>
@@ -7,6 +7,4 @@
     <string name="lat_long_snippet">Latitude: %1$.5f, Longitude: %2$.5f</string>
     <string name="dropped_pin">Dropped Pin</string>
     <string name="poi">poi</string>
-
-
 </resources>
