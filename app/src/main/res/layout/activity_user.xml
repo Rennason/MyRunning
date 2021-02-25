@@ -15,7 +15,7 @@
         android:textSize="20sp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -53,31 +53,34 @@
 
     <EditText
         android:id="@+id/weight_user"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@id/Peso"
+        android:inputType="number"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/nameEdit"
         app:layout_constraintStart_toEndOf="@id/Peso"
-        android:layout_marginStart="20dp"/>
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"/>
 
     <EditText
         android:id="@+id/height_user"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/Altura"
-        app:layout_constraintStart_toEndOf="@id/Altura"
-        android:layout_marginStart="20dp"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/weight_user"
+        app:layout_constraintStart_toStartOf="@id/weight_user"
         android:textAlignment="center" />
 
     <EditText
         android:id="@+id/age_user"
-        android:layout_width="wrap_content"
+        android:layout_width="25dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/Idade"
-        app:layout_constraintStart_toEndOf="@id/Idade"
-        android:layout_marginStart="20dp"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/height_user"
+        app:layout_constraintStart_toStartOf="@id/weight_user"
         android:textAlignment="center"/>
 
     <Button
