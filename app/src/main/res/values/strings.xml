@@ -7,4 +7,9 @@
     <string name="lat_long_snippet">Latitude: %1$.5f, Longitude: %2$.5f</string>
     <string name="dropped_pin">Dropped Pin</string>
     <string name="poi">poi</string>
+    <string name="seu_nome">Seu nome</string>
+    <string name="peso">Peso:</string>
+    <string name="altura">Altura:</string>
+    <string name="idade">Idade:</string>
+    <string name="enviar">Enviar</string>
 </resources>

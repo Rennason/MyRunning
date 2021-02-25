@@ -111,14 +111,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
         val avgSpeed: Float = round( distanceKm / timeHour * 10)/10f //converte milisegundos para hora e distancia em km
         //Basal Homens - HARIS BENEDICT
         //66 + (13,7 x Peso) + (5,0 x Altura) – (6,8 x Idade)
-        val Basal = 66 + (13.7 * weight) + (5.0 * height) - (6.8 * age)
-        var calories = (Basal/24*timeHour).toInt()
+        val basal = 66 + (13.7 * weight) + (5.0 * height) - (6.8 * age)
+        var calories = (basal/24*timeHour).toInt()
         calories += (distanceKm * weight).toInt()
 
         val pair = Pair(calories, avgSpeed)
         return pair
     }
-
 
     private fun calculatePolilineLength(poliline : PoliLine) : Float {
         var distance = 0f

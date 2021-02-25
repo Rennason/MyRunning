@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+ <item android:drawable="@color/background_logo"/>
+ <item android:drawable="@drawable/ic_iconfinder_sport_badges_07_2064039" android:gravity="center"/>
+ </layer-list>

@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_iconfinder_sport_badges_07_2064039"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Maps">
+        android:theme="@style/splashScreenTheme">
 
 
         <meta-data
@@ -22,7 +22,6 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".User">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +31,6 @@
 
 
         <activity android:name=".MainActivity">
-
         </activity>
 
         <service
