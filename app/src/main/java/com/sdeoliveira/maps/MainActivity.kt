@@ -101,9 +101,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLoca
 
     private fun endRun(): Pair<Int,Float>  {
         var distanceMeters = 0
-        //for (poliline in pathPoints){
-            distanceMeters += calculatePolilineLength(pathPoints.last()).toInt()
-       // }
+        distanceMeters = calculatePolilineLength(pathPoints.last()).toInt()
 
         var distanceKm = distanceMeters/1000f
         val timeHour = curTimeMillis/1000f/60/60
