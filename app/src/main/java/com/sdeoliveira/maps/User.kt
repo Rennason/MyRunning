@@ -22,7 +22,7 @@ class User : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setTheme(R.style.Theme_Maps)
+        setTheme(R.style.Theme_Maps)
         setContentView(R.layout.activity_user)
 
         val btnSave = findViewById<Button>(R.id.btnSave)
